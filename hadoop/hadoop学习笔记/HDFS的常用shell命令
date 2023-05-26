@@ -1,0 +1,21 @@
+#HDFS常用shell命令
+hadoop fs 具体命令  #统一格式，分为三大类：上传、下载、具体
+#上传
+hadoop fs -moveFromLocal ./文件 /放入HDFS的哪里 #剪切
+hadoop fs -copyFromLocal ./文件 /放入HDFS的哪里 #复制
+hadoop fs -put ./文件 /放入HDFS的哪里           #复制
+hadoop fs -appendToFile ./文件 /放入HDFS的哪里  #追加，只支持追加，不支持随即修改
+#下载
+hadoop fs -copyToLocal 文件位置                     #从HDFS下载到本地
+hadoop fs -get 文件位置/文件名 ./新文件名           #下载，可以改名
+hadoop fs -ls 文件位置								#显示目录信息
+hadoop fs -cat 文件位置								#查看文件
+hadoop fs -chown 用户组：用户名 /文件位置			#修改用户权限
+hadoop fs -mkdir 位置/文件							#创建文件
+hadoop fs -cp 原始路径/目标地址						#将原文件拷贝到另一个路径
+hadoop fs -mv 原始路径/目标地址						#移动剪切
+hadoop fs -tail 文件位置							#查看文件末尾，一般末尾出问题，最新的数据在末尾，log日志4
+hadoop fs -rm										#删除文件
+hadoop fs -rm -r									#递归删除，删除文件及内容
+hadoop fs -du -s -h 文件夹							#查看文件大小
+hadoop fs -setrep 数量 文件位置 									#设置hdfs中文件的副本数量

@@ -1,0 +1,87 @@
+
+#搭建集群准备工作
+vim /etc/sysconfig/network-scripts/ifcfg-ens33 #改变主机地址
+hostname #查看主机名称
+vim /etc/hostname #改变主机名字
+reboot #退出，退出后才能查看名字是否更改成功
+
+#检验
+ifconfig #查看是否连接成功
+hostname #检查名字是否更改成功
+ping www.baidu.com #查看是否能连接互联网
+
+#关闭防火墙
+systemctl status firewalld #查看防火状态，running代表开启，dead代表关闭
+systemctl stop firewalld #暂时关闭防火墙
+systemctl enable firewalld #重启防火墙
+#永久关闭后重启
+#Linux永久关闭防火墙 firewalld和sellinux设置
+#关闭 firewalld：
+systemctl disable firewalld #永久关闭,即设置开机的时候不自动启动
+#关闭 selinux：
+sudo vim /etc/sysconfig/selinux #文件将SELINUX=disable
+
+#修改目录的用户名
+sudo chown clh module/ #修改用户名
+sudo chgrp -R clh /opt #修改用户组
+
+#安装jdk
+#上传jdk，用SFTP把jdk上传到software文件夹里
+#下载解压缩jdk，在software目录下
+tar -zxvf jdk名字 -C /opt/module/
+#在jdk目录下配置环境
+cd /etc/profile.d/  #进入jdk目录后，进入profile.d目录
+sudo  vim my_env.sh #创建文件
+#在创建的文件里，配置jdk环境变量，路径用jdk的路径，查看路径的命令是pwd
+#还是在profile.d目录下
+source /etc/profile #重新加载
+#输入java测试是否成功
+
+#安装hadoop
+tar -zxvf hadoop版本 -C /opt/module/ 
+#配置环境变量
+sudo vim /etc/profile.d/my_env.sh
+#打开文件，重新加载
+source /etc/profile
+#用hadoop检验
+
+#编写集群分发脚本
+mkdir bin #在home下创建bin目录
+vim xsync #把写好的脚本放在xsync文件里
+xsync bin #利用写好的脚本，在每一个服务器里创建bin目录
+xsync /opt/software #分发hadoop，jdk
+tar -zxvf hadoop/jdk版本 -C /opt/module/ #安装hadoop/jdk
+sudo ./bin/xsync /etc/profile.d/my_env.sh #分发环境变量
+
+#免密登录
+ls -al #列出home下的所有文件，cd到.ssh
+ssh-keygen -t rsa  #创建公钥和私钥，3次回车
+ssh-copy-id hadoop103 #复制到102、103、104.....
+#在所有服务器上重复此操作
+su root #在root账号下配置免密操作
+
+#集群配置
+NameNode，secondarynode，ResourceManager都很消耗内存，分开放
+vim hdfs/core/yarn/mapred-site.xml #在hadoop目录下编辑这几个目录并把写好的脚本放进去
+xsync hadoop #分发
+vim workers #编辑
+
+#集群初始化，一次就行
+hdfs namenode -format #102上
+start-dfs.sh #启动
+jps #查看运行中的进程，检查，与集群规划进行对比
+#在浏览器上访问web页面 url：hadoop102:9870
+sbin/start-yarn.sh #注意这是在103上启动
+jps #检查名字是否更改成功stop
+bin/mapred --daemon start historyserver #在102上手动开启历史服务器
+
+#写两个脚本，自动开启关闭hadoop
+vim myhadoop.sh #在bin目录下创建，粘贴脚本
+chmod 777 myhadoop #赋予权限
+myhadoop.sh start/stop #开启关闭集群
+vim jpsall #查询所有服务器运行状态，复制脚本（依旧在bin目录下）
+chmod 777 jpsall 
+xsync jpsall #分发
+jpsall #查询
+
+

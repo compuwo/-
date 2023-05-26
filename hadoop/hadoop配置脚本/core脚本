@@ -1,0 +1,23 @@
+#core-site.xml
+
+<configuration>
+
+	<!-- 指定 NameNode 的地址 -->
+		<property>
+			<name>fs.defaultFS</name>
+			<value>hdfs://hadoop102:8020</value>
+		</property>
+		
+    <!-- 指定 hadoop 数据的存储目录 -->
+		<property>
+			<name>hadoop.tmp.dir</name>
+			<value>/opt/module/hadoop-3.3.5/data</value>
+		</property>
+ 
+	<!--配置HDFS网页登录使用的静态用户为atguigu-->
+		<property>
+			<name>hadoop.http.staticuser.user</name>
+			<value>atguigu</value>
+		</property>
+		
+</configuration>

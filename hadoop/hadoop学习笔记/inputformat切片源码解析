@@ -1,0 +1,20 @@
+FileInputFormat切片源码解析
+（1）程序先找到数据存储的目录
+（2）开始遍历处理（规划切片）目录下的每一个文件
+（3）遍历第一个文件
+	a）获取文件大小fs.sizeOf（ss.txt）
+	b）计算切片大小
+	  computeSplitSize（Math.max（minSize，Math.min（maxsize，blocksize）））=blocksize=128M #在虚拟机上是128M，本地是32M
+	 最小默认1，最大默认Long。MAXValue
+	c)默认情况下，切片大小=blocksize
+	d）开始切，形成第一个切片：sss.txt-0:128M,第二个128：256M，3：256：300M
+	每次切片时，要判断剩下的是否大于块的1.1倍，不大于就不切了 #总-切/kuai
+	e）切片信息写到切片规划文件
+	f）整个切片的核心过程在getSplit（）方法上完成
+	g）InputSplit只记录了切片的元数据信息，比如起始位置，长度以及所在的节点列表等
+	
+（4）提交切片规划文件到YARN上，Yarn的MrAppMaster就可以根据切片规划文件计算开启MapTask个数
+	
+重点：c，d，每一个文件单独切片
+	
+	

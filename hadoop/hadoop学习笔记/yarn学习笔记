@@ -1,0 +1,20 @@
+yarn application -list		#查看任务运行情况
+yarn application -list -appStates FINISHED    #查看kill掉的任务运行情况
+yarn application -kill 应用程序   #杀死某一个应用程序
+yarn logs -applicationID<ApplicationID> -containerID <containerID> #查看日志,查看容器运行情况
+yarn applicationattempt -list	#查看尝试运行的任务
+yarn applicationattempt -status <applicationattemptID>	#查看任务提交情况
+yarn container -list <applicationattemptID>  #查看容器尝试提交的ID
+yarn container -status <containerID>	#查看容器状态
+yarn node -list -all #查看节点配置
+yarn rmadmin -refreshQueues #查看队列更新配置，直接使用就能查看修改后的配置参数，只能查看yarn下的队列
+yarn queue -status<QueueName> #默认为defaul，查看队列
+
+#yarn生产环境核心配置参数
+1）ResourceManager相关
+
+
+2）NodeManager相关
+
+
+
